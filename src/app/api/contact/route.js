@@ -11,15 +11,15 @@ export async function POST(request) {
       service:"gmail",
       
       auth: {
-        user: '', //type your email
-        pass: '', //enable 2 factor authentication on gmail and generate a password from App passwords section 
+        user: process.env.EMAIL, //type your email
+        pass: process.env.PASSWORD, //enable 2 factor authentication on gmail and generate a password from App passwords section 
       },
      
     })
     
     const info = await transporter.sendMail({
       from: `"${data.name}"`, 
-      to: "",//type the email where you want to send 
+      to: process.env.EMAIL,//type the email where you want to send 
       subject: `Inquiry from Website Contact Form`, 
       text: "", 
       html: `
