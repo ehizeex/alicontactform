@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import { FaLocationDot } from "react-icons/fa6";
 import { FiPhoneCall } from "react-icons/fi";
 import { AiFillMail, AiOutlineFieldTime } from "react-icons/ai"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import { FaHeadphones } from "react-icons/fa";
 export default function Home() {
   const [state,setState]=useState({
@@ -13,9 +16,6 @@ export default function Home() {
     subject:'',
     message:'',
   })
-  const [successMessage,setSuccessMessage]=useState("")
-  const [errorMessage,setErrorMessage]=useState("")
-  const [loading,setLoading]=useState(false)
 
   
   const handleChange=(e)=>{
@@ -26,6 +26,15 @@ export default function Home() {
       ...state,
       [key]:value
     })
+  }
+
+  const handlePhoneChange=(e)=>{
+    const value = e.target.value;
+    // Use a regular expression to allow only numeric characters
+    const numericValue = value.replace(/[^0-9]/g, '');
+
+    // Update the input value
+    setState({...state,phoneNumber:numericValue});
   }
 
   const clearState=()=>{
@@ -41,7 +50,6 @@ export default function Home() {
 
   const handleSubmit=(e)=>{
     e.preventDefault()
-    setLoading(true)
     let data = {
       ...state
     }
@@ -53,28 +61,25 @@ export default function Home() {
       },
       body: JSON.stringify(data)
     }).then(async(res) => {
-      setLoading(false)
       const response= await res.json()
        if(!response.error){
          
          clearState()
-         setSuccessMessage(response.message)
-         setErrorMessage('')
-       }
+         toast(response.message)     
+          }
       else{
         clearState()
-        setErrorMessage(response.message)
-        setSuccessMessage('')
-      }
+        toast("Something went wrong try again.")
+       }
     }).catch(e=>{
        clearState()
-       setLoading(false)
-       setErrorMessage("Something went wrong try again.")
-       setSuccessMessage('')
+       toast("Something went wrong try again.")
     })
   }
   return (
     <>
+                <ToastContainer/ >
+
     <div className="bg-gray-100 flex flex-col items-center justify-center pt-[80px] pb-[80px] px-[20px]">
     <div className="text-center bg-red-600 py-[1px] px-[8px] tracking-wide uppercase font-semibold text-[14px] text-white">
       Contact Details
@@ -227,7 +232,7 @@ export default function Home() {
               type="text"
               value={state.phoneNumber}
               required
-              onChange={handleChange}
+              onChange={handlePhoneChange}
 
               placeholder="Your Number.."
               className="px-[12px] outline-none  rounded-md py-[12px] flex-1 bg-gray-200"
@@ -255,10 +260,7 @@ export default function Home() {
             />
           </div>
           <div>
-            {successMessage && <p className="text-green-600 font-bold p-2" >{successMessage}</p>}
-            {errorMessage && <p className="text-red-600 font-bold p-2" >{errorMessage}</p>}
-            {loading && <div className=" mb-3 ml-3 w-6 h-6 border-t-2 border-blue-500 border-solid rounded-full animate-spin"></div>}
-
+            
             <button  className="bg-blue-900 sm:w-auto w-full px-[35px] py-[12px] hover:bg-red-800 transition-colors font-semibold text-white duration-500">
               SEND YOU MESSAGE
             </button>
@@ -266,6 +268,7 @@ export default function Home() {
         </form>
       </div>
     </div>
+
   </>
   )
 }

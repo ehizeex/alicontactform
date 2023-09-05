@@ -14,6 +14,7 @@ export async function POST(request) {
         user: process.env.EMAIL, //type your email
         pass: process.env.PASSWORD, //enable 2 factor authentication on gmail and generate a password from App passwords section 
       },
+      
      
     })
     
@@ -88,6 +89,7 @@ export async function POST(request) {
 
   }
   catch(e){
+    console.log(e)
     return NextResponse.json({ error:true, message:'Something went wrong please try again.' })
 
   }
